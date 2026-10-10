@@ -1,0 +1,120 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{db}/documents {
+
+    // ---------- helpers ----------
+    function signedIn() { return request.auth != null; }
+    function userPath(uid) { return /databases/$(db)/documents/users/$(uid); }
+    function myProfile() { return get(userPath(request.auth.uid)).data; }
+    function hasProfile() { return signedIn() && exists(userPath(request.auth.uid)); }
+    // Role comes from users/{uid}.role, which no client can write (see users rules).
+    function isAdmin()  { return hasProfile() && myProfile().role == 'admin'  && myProfile().status == 'active'; }
+    function isActiveStudent() { return hasProfile() && myProfile().role == 'student' && myProfile().status == 'active'; }
+
+    // ---------- users ----------
+    match /users/{uid} {
+      allow read: if signedIn() && (request.auth.uid == uid || isAdmin());
+
+      // Public sign-up: student only, and the username reservation must be created in the same commit.
+      allow create: if signedIn() && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['uid','fullName','username','email','studentId','department','year','role','status','createdAt','updatedAt','lastLoginAt'])
+        && request.resource.data.uid == uid
+        && request.resource.data.role == 'student'
+        && request.resource.data.status == 'active'
+        && request.resource.data.username.matches('^[a-z0-9_]{3,20}$')
+        && request.resource.data.fullName is string && request.resource.data.fullName.size() >= 2 && request.resource.data.fullName.size() <= 80
+        && request.resource.data.email.lower() == request.auth.token.email.lower()
+        && request.resource.data.studentId.matches('^[A-Za-z0-9\\-/]{4,20}$')
+        && request.resource.data.createdAt == request.time
+        && getAfter(/databases/$(db)/documents/usernames/$(request.resource.data.username)).data.uid == uid;
+
+      // Student: only these harmless fields. role/status/username/email/studentId are immutable.
+      // Admin: may only toggle status (and never on themselves).
+      allow update: if signedIn() && (
+        (request.auth.uid == uid && isActiveStudent()
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['fullName','department','year','updatedAt','lastLoginAt']))
+        || (isAdmin() && request.auth.uid != uid
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status','updatedAt'])
+          && request.resource.data.status in ['active','disabled'])
+      );
+      allow delete: if false;
+    }
+
+    // ---------- username reservations ----------
+    match /usernames/{name} {
+      allow get: if signedIn();          // needed by the sign-up transaction; reveals only a uid
+      allow list: if false;
+      allow create: if signedIn()
+        && name.matches('^[a-z0-9_]{3,20}$')
+        && request.resource.data.keys().hasOnly(['uid','createdAt'])
+        && request.resource.data.uid == request.auth.uid
+        && getAfter(userPath(request.auth.uid)).data.username == name;   // reservation + profile in one commit
+      allow update, delete: if false;
+    }
+
+    // ---------- events ----------
+    match /events/{eventId} {
+      allow read: if resource.data.status in ['published','cancelled','completed'] || isAdmin();
+      allow create, update, delete: if isAdmin();
+    }
+
+    // ---------- seat counters (one doc per event) ----------
+    // Students may only +1 (register) or -1 (cancel) together with their own registration write,
+    // and never above the event capacity.
+    match /eventStats/{eventId} {
+      allow read: if true;
+      allow create, delete: if isAdmin();
+      allow update: if isAdmin() || (isActiveStudent()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['registeredCount'])
+        && (
+          // register (new or re-register after cancel)
+          ( request.resource.data.registeredCount == resource.data.registeredCount + 1
+            && request.resource.data.registeredCount <= get(/databases/$(db)/documents/events/$(eventId)).data.capacity
+            && get(/databases/$(db)/documents/events/$(eventId)).data.status == 'published'
+            && request.time <= get(/databases/$(db)/documents/events/$(eventId)).data.registrationDeadlineAt
+            && getAfter(/databases/$(db)/documents/registrations/$(request.auth.uid + '_' + eventId)).data.status == 'confirmed' )
+          ||
+          // cancel
+          ( request.resource.data.registeredCount == resource.data.registeredCount - 1
+            && request.resource.data.registeredCount >= 0
+            && getAfter(/databases/$(db)/documents/registrations/$(request.auth.uid + '_' + eventId)).data.status == 'cancelled' )
+        ));
+    }
+
+    // ---------- registrations (id = uid_eventId, so duplicates are impossible) ----------
+    match /registrations/{regId} {
+      allow read: if signedIn() && (resource.data.studentUid == request.auth.uid || isAdmin());
+
+      allow create: if isActiveStudent()
+        && regId == request.auth.uid + '_' + request.resource.data.eventId
+        && request.resource.data.keys().hasOnly(['studentUid','eventId','status','reference','registeredAt'])
+        && request.resource.data.studentUid == request.auth.uid
+        && request.resource.data.status == 'confirmed'
+        && request.resource.data.registeredAt == request.time
+        && getAfter(/databases/$(db)/documents/eventStats/$(request.resource.data.eventId)).data.registeredCount
+           == get(/databases/$(db)/documents/eventStats/$(request.resource.data.eventId)).data.registeredCount + 1;
+
+      // cancelled -> confirmed (re-register) or confirmed -> cancelled, only by the owner
+      allow update: if isActiveStudent() && resource.data.studentUid == request.auth.uid
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status','registeredAt','cancelledAt'])
+        && ( (resource.data.status == 'confirmed' && request.resource.data.status == 'cancelled')
+          || (resource.data.status == 'cancelled' && request.resource.data.status == 'confirmed') )
+        && getAfter(/databases/$(db)/documents/eventStats/$(resource.data.eventId)).data.registeredCount
+           != get(/databases/$(db)/documents/eventStats/$(resource.data.eventId)).data.registeredCount;
+      allow delete: if false;
+    }
+
+    // ---------- login activity (append-only) ----------
+    match /loginActivity/{id} {
+      allow read: if signedIn() && (resource.data.uid == request.auth.uid || isAdmin());
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(['uid','fullName','type','createdAt'])
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.type in ['login','logout']
+        && request.resource.data.createdAt == request.time;
+      allow update, delete: if false;
+    }
+
+    // Everything else: denied by default.
+  }
+}

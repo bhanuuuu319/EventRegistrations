@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
+<link href="css/style.css" rel="stylesheet"><title>Create account · EventRegister</title></head>
+<body>
+<div class="bg-orbs" aria-hidden="true"><span></span><span></span><span></span></div>
+<main class="auth-wrap">
+  <section class="glass auth-card">
+    <a class="brand d-inline-block mb-3" href="index.html"><i class="bi bi-stars"></i> EventRegister</a>
+    <h1 class="h3 mb-1">Create your student account</h1>
+    <p class="text-secondary mb-4">Register once, then sign up for any campus event.</p>
+    <form id="registerForm" novalidate>
+      <div class="row g-3">
+        <div class="col-12"><label class="form-label" for="fullName">Full name</label>
+          <input class="form-control" id="fullName" autocomplete="name" required><div class="invalid-feedback"></div></div>
+        <div class="col-md-6"><label class="form-label" for="username">Username</label>
+          <input class="form-control" id="username" autocomplete="username" placeholder="e.g. priya_k" required><div class="invalid-feedback"></div></div>
+        <div class="col-md-6"><label class="form-label" for="studentId">Student ID / registration no.</label>
+          <input class="form-control" id="studentId" required><div class="invalid-feedback"></div></div>
+        <div class="col-12"><label class="form-label" for="email">Email address</label>
+          <input class="form-control" id="email" type="email" autocomplete="email" required><div class="invalid-feedback"></div></div>
+        <div class="col-md-6"><label class="form-label" for="department">Department</label>
+          <select class="form-select" id="department" required><option value="">Select…</option>
+            <option>CSE</option><option>IT</option><option>ECE</option><option>EEE</option><option>MECH</option><option>CIVIL</option><option>AI&amp;DS</option><option>MBA</option><option>Other</option></select>
+          <div class="invalid-feedback"></div></div>
+        <div class="col-md-6"><label class="form-label" for="year">Year of study</label>
+          <select class="form-select" id="year" required><option value="">Select…</option><option>I</option><option>II</option><option>III</option><option>IV</option></select>
+          <div class="invalid-feedback"></div></div>
+        <div class="col-12"><label class="form-label" for="password">Password</label>
+          <div class="input-group">
+            <input class="form-control" id="password" type="password" autocomplete="new-password" required>
+            <button class="btn btn-pw" type="button" data-toggle-pw="password" aria-label="Show password"><i class="bi bi-eye"></i></button>
+            <div class="invalid-feedback"></div>
+          </div>
+          <div class="strength-track mt-2" role="progressbar" aria-label="Password strength"><div id="strengthBar"></div></div>
+          <div class="small mt-1">Strength: <strong id="strengthLabel" aria-live="polite"></strong></div>
+          <ul class="req-list">
+            <li data-req="len"><i class="bi bi-circle"></i> 8+ characters</li>
+            <li data-req="upper"><i class="bi bi-circle"></i> Uppercase letter</li>
+            <li data-req="lower"><i class="bi bi-circle"></i> Lowercase letter</li>
+            <li data-req="num"><i class="bi bi-circle"></i> A number</li>
+            <li data-req="special"><i class="bi bi-circle"></i> Special character (@ # $ !)</li>
+          </ul></div>
+        <div class="col-12"><label class="form-label" for="confirmPassword">Confirm password</label>
+          <div class="input-group">
+            <input class="form-control" id="confirmPassword" type="password" autocomplete="new-password" required>
+            <button class="btn btn-pw" type="button" data-toggle-pw="confirmPassword" aria-label="Show password"><i class="bi bi-eye"></i></button>
+            <div class="invalid-feedback"></div>
+          </div></div>
+        <div class="col-12"><div class="form-check">
+          <input class="form-check-input" type="checkbox" id="terms" required>
+          <label class="form-check-label small" for="terms">I accept the terms and conditions</label></div></div>
+        <div class="col-12"><button id="submitBtn" class="btn btn-glow w-100" type="submit">Create account</button></div>
+      </div>
+    </form>
+    <p class="text-center text-secondary mt-4 mb-0">Already registered? <a href="login.html">Log in</a></p>
+  </section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script type="module" src="js/register.js"></script>
+</body></html>

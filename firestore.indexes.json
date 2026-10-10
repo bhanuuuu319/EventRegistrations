@@ -1,0 +1,12 @@
+{
+  "indexes": [
+    { "collectionGroup": "events", "queryScope": "COLLECTION", "fields": [ {"fieldPath":"status","order":"ASCENDING"}, {"fieldPath":"eventDate","order":"ASCENDING"} ] },
+    { "collectionGroup": "events", "queryScope": "COLLECTION", "fields": [ {"fieldPath":"category","order":"ASCENDING"}, {"fieldPath":"status","order":"ASCENDING"}, {"fieldPath":"eventDate","order":"ASCENDING"} ] },
+    { "collectionGroup": "events", "queryScope": "COLLECTION", "fields": [ {"fieldPath":"status","order":"ASCENDING"}, {"fieldPath":"createdAt","order":"DESCENDING"} ] },
+    { "collectionGroup": "registrations", "queryScope": "COLLECTION", "fields": [ {"fieldPath":"studentUid","order":"ASCENDING"}, {"fieldPath":"registeredAt","order":"DESCENDING"} ] },
+    { "collectionGroup": "registrations", "queryScope": "COLLECTION", "fields": [ {"fieldPath":"eventId","order":"ASCENDING"}, {"fieldPath":"registeredAt","order":"DESCENDING"} ] },
+    { "collectionGroup": "loginActivity", "queryScope": "COLLECTION", "fields": [ {"fieldPath":"type","order":"ASCENDING"}, {"fieldPath":"createdAt","order":"DESCENDING"} ] },
+    { "collectionGroup": "users", "queryScope": "COLLECTION", "fields": [ {"fieldPath":"role","order":"ASCENDING"}, {"fieldPath":"createdAt","order":"DESCENDING"} ] }
+  ],
+  "fieldOverrides": []
+}
