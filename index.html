@@ -1,0 +1,42 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
+<link href="css/style.css" rel="stylesheet"><title>EventRegister: Discover campus events</title></head><body>
+<div class="bg-orbs" aria-hidden="true"><span></span><span></span><span></span></div><div id="nav"></div>
+<header class="hero"><div class="container"><div class="row align-items-center g-5">
+  <div class="col-lg-7">
+    <h1>Discover Your Next <span>Big Moment</span></h1>
+    <p class="lead text-secondary my-4">Explore campus events, connect with your community, and register for experiences that matter.</p>
+    <a href="events.html" class="btn btn-glow btn-lg btn-pulse me-2 mb-2">Explore Events</a>
+    <a href="register.html" class="btn btn-outline-light btn-lg rounded-pill mb-2">Join Now</a>
+  </div>
+  <div class="col-lg-5"><div class="glass ticket" id="heroTicket"><div class="skeleton" style="height:180px"></div></div></div>
+</div></div></header>
+
+<section class="section pt-3"><div class="container"><div class="row g-3 reveal">
+  <div class="col-6 col-md-3"><div class="glass stat"><i class="bi bi-calendar-event"></i><div class="num" id="s-events">0</div><div class="lbl">Upcoming events</div></div></div>
+  <div class="col-6 col-md-3"><div class="glass stat"><i class="bi bi-ticket-perforated"></i><div class="num" id="s-seats">0</div><div class="lbl">Seats booked</div></div></div>
+  <div class="col-6 col-md-3"><div class="glass stat"><i class="bi bi-grid"></i><div class="num" id="s-cats">0</div><div class="lbl">Categories</div></div></div>
+  <div class="col-6 col-md-3"><div class="glass stat"><i class="bi bi-people"></i><div class="num" id="s-open">0</div><div class="lbl">Open for registration</div></div></div>
+</div></div></section>
+
+<section class="section"><div class="container">
+  <h2 class="mb-4">Featured upcoming events</h2>
+  <div class="row g-4" id="featured"><div class="col-md-4"><div class="skeleton"></div></div><div class="col-md-4"><div class="skeleton"></div></div><div class="col-md-4"><div class="skeleton"></div></div></div>
+</div></section>
+
+<section class="section"><div class="container">
+  <h2 class="mb-4">Browse by category</h2><div class="row g-3" id="catGrid"></div>
+</div></section>
+
+<section class="section" id="about"><div class="container">
+  <h2 class="mb-4">Why EventRegister</h2>
+  <div class="row g-4">
+    <div class="col-md-4 reveal"><div class="glass p-4 h-100"><h3 class="h5"><i class="bi bi-lightning-charge text-info me-2"></i>Register in seconds</h3><p class="text-secondary mb-0">Confirm once and get a reference number you can show at the venue.</p></div></div>
+    <div class="col-md-4 reveal"><div class="glass p-4 h-100"><h3 class="h5"><i class="bi bi-shield-check text-info me-2"></i>Fair seat counts</h3><p class="text-secondary mb-0">Seats are counted by the database itself, so events never get overbooked.</p></div></div>
+    <div class="col-md-4 reveal"><div class="glass p-4 h-100"><h3 class="h5"><i class="bi bi-calendar-plus text-info me-2"></i>Never miss a start</h3><p class="text-secondary mb-0">Live countdowns, your own registration history, and one-tap calendar links.</p></div></div>
+  </div>
+</div></section>
+<footer><div class="container d-flex flex-wrap justify-content-between align-items-center gap-2"><div><a class="brand" href="index.html"><i class="bi bi-stars"></i> EventRegister</a><div class="small mt-1"><i class="bi bi-envelope me-1"></i>events@yourcollege.edu &nbsp; <i class="bi bi-telephone me-1"></i>+91 00000 00000</div></div><div><a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a><a href="#" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a><a href="#" aria-label="YouTube"><i class="bi bi-youtube"></i></a></div></div></footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script><script type="module" src="js/home.js"></script></body></html>
